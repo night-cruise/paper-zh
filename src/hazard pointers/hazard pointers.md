@@ -143,19 +143,19 @@ The methodology communicates with the associated algorithms only through hazard 
 
 ### 3.1 The Algorithm
 
-![Fig 1](./imgs/Fig 1.png)
+![Fig%201](./imgs/Fig%201.png)
 
 Fig. 1 shows the shared and private structures used by the algorithm. The main shared structure is the list of hazard pointer (HP) records. The list is initialized to contain one HP record for each of the N participating threads. The total number of hazard pointers is H = NK[^R]. Each thread uses two static private variables, rlist (retired list) and rcount (retired count), to maintain a private list of retired nodes.
 
 图 1 显示出该算法所使用的共享和私有结构。主要的共享结构是风险指针（HP）记录的列表。该列表被初始化为给 N 个参与线程的每一个都包含一个HP 记录。风险指针的总数是 H=NK [^R]。每个线程使用了两个静态的私有变量，rlist（退休列表）和 rcount（退休计数），以保持私有的退休节点列表。
 
-![Fig 2](./imgs/Fig 2.png)
+![Fig%202](./imgs/Fig%202.png)
 
 Fig. 2 shows the RetireNode routine, where the retired node is inserted into the thread’s list of retired nodes and the length of the list is updated. Whenever the size of a thread’s list of retired nodes reaches a threshold R, the thread scans the list of hazard pointers using the Scan routine. R can be chosen arbitrarily. However, in order to achieve a constant expected amortized processing time per retired node, R must satisfy R = H + Ω(H).
 
 图 2 所示的 RetireNode 例程，其中退休节点插入线程的退休节点的列表，并更新列表的长度。每当线程的退休的节点列表的大小达到阈值 R，线程就使用 Scan 例程扫描风险指针（hazard pointers）列表。 R 可以是任意选择的。然而，为了每个退休节点达到一个常量的预期分摊处理时间，R 必须满足 R = H + Ω(H)。
 
-![FIg 3](./imgs/Fig 3.png)
+![FIg 3](./imgs/Fig%203.png)
 
 Fig. 3 shows the Scan routine. A scan consists of two stages. The first stage involves scanning the HP list for nonnull values. Whenever a nonnull value is encountered, it is inserted in a local list plist, which can be implemented as a hash table. The second stage of Scan involves checking each node in rlist against the pointers in plist. If the lookup yields no match, the node is identified to be ready for arbitrary reuse. Otherwise, it is retained in rlist until the next scan by the current thread. Insertion and lookup in plist take constant expected time.
 
@@ -199,7 +199,7 @@ Furthermore, it may be desirable to guarantee that every node that is eligible f
 
 此外，可能需要保证每个可以被重用的节点最终都被释放，除非线程失败。要做到这一点，在执行 Scan 后，线程再执行一个 HelpScan，它会检查每个 HP 记录。如果有 HP 记录是不活动的（inactive），线程将其使用 TAS 锁定，并从其 rlist 中弹出（pop）节点。每当线程积累 R 个节点，就执行执行一次 Scan。因此，即使一个线程退出时留下了一个具有非空 rlist 的 HP 记录，而其 HP 记录恰巧没有被重用，rlist 中的节点仍然可以被其他执行  HelpScan 的线程处理。
 
-![Fig 4](./imgs/Fig 4.png)
+![Fig%204](./imgs/Fig%204.png)
 
 Fig. 4 shows a version of the algorithm that incorporates the above mentioned extensions. The algorithm is still waitfree, and only single-word instructions are used.
 
@@ -328,7 +328,7 @@ Omit
 
 ### 4.2 LIFO Stacks
 
-![Fig 8](./imgs/Fig 8.png)
+![Fig%208](./imgs/Fig%208.png)
 
 Fig. 8 shows a lock-free stack based on the IBM freelist algorithm [^11] augmented with hazard pointers. In the push routine, the node accesses in lines 2 and 4 are not hazardous (as *node is owned by the thread at the time), and the CAS in line 5 is not ABA-prone (as the change of Top between lines 3 and 5 can never lead to corrupting the stack or any other object). Thus, no hazard pointers are needed for the push routine.
 
