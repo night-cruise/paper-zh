@@ -17,7 +17,7 @@ A shared object is lock-free (also called nonblocking) if it guarantees that whe
 
 Many algorithms for lock-free dynamic objects have been developed, e.g., [^11], [^9], [^23], [^21], [^4], [^5], [^16], [^7], [^25], [^18]. However, a major concern regarding these objects is the reclamation of the memory occupied by removed nodes. In the case of a lock-based object, when a thread removes a node from the object, it is easy to guarantee that no other thread will subsequently access the memory of that node, before it is reused or reallocated. Consequently, it is usually safe for the removing thread to reclaim the memory occupied by the removed node (e.g., using free) for arbitrary future reuse by the same or other threads (e.g., using malloc)
 
-已经开发出了许多无锁动态对象的算法，例如 [^11],[^9], [^23], [^21], [^4], [^5], [^16], [^7], [^25], [^18] 。但是，关于这些对象的一个主要关注的问题是，如何回收已经删除掉的节点所占用的内存。在基于锁的对象的情形下，当线程从对象中删除一个节点时，在它被重用或者重新分配之前，很容易保证没有其他线程会在此后访问该节点的内存。因此，删除线程通常可以安全地回收被删除节点占用的内存（例如，使用 free），以便将来由相同或其他线程（例如，利用malloc）任意重用。
+已经开发出了许多无锁动态对象的算法，例如 [^11],[^9], [^23], [^21], [^4], [^5], [^16], [^7], [^25], [^18] 。但是，关于这些对象的一个主要关注的问题是，如何回收已经删除掉的节点所占用的内存。在基于锁的对象的情形下，当线程从对象中删除一个节点时，在它被重用或者重新分配之前，很容易保证没有其他线程会在此后访问该节点的内存。因此，删除线程通常可以安全地回收被删除节点占用的内存（例如，使用 free），以便将来由相同或其他线程（例如，利用 malloc）任意重用。
 
 This is not the case for a typical lock-free dynamic object, when running in programming environments without support for automatic garbage collection. In order to guarantee lock-free progress, each thread must have unrestricted opportunity to operate on the object, at any time. When a thread removes a node, it is possible that some other contending thread—in the course of its lock-free operation—has earlier read a reference to that node, and is about to access its contents. If the removing thread were to reclaim the removed node for arbitrary reuse, the contending thread might corrupt the object or some other object that happens to occupy the space of the freed node, return the wrong result, or suffer an access error by dereferencing an invalid pointer value. Furthermore, if reclaimed memory is returned to the operating system (e.g., using munmap), access to such memory locations can result in fatal access violation errors. Simply put, the memory reclamation problem is how to allow the memory of removed nodes to be freed (i.e., reused arbitrarily or returned to the OS), while guaranteeing that no thread accesses free memory, and how to do so in a lock-free manner.
 
@@ -45,7 +45,7 @@ Whenever a thread retires a node, it keeps the node in a private list. After acc
 
 By organizing a private list of snapshots of nonnull hazard pointers in a hash table that can be searched in constant expected time, and if the value of R is set such that R = H + Ω(H), where H is the total number of hazard pointers, then the methodology is guaranteed in every scan of the hazard pointers to identify Θ(R) nodes as eligible for arbitrary reuse, in O(R) expected time. Thus, the expected amortized time complexity of processing each retired node until it is eligible for reuse is constant.
 
-通过组织一个私有的非空风险指针的快照的的列表到一个可以以常量预期时间搜索的哈希表中，且如果R设置为满足 R = H + Ω(H)，其中 H 是风险指针的总数，那么该方法可以保证在每次扫描风险指针的过程中能识别 Θ(R) 个可任意重用的节点，且能够在 O(R) 预期时间内完成。因此，处理每个退休节点直到它可以被重用的期望分摊时间复杂度是一个常量。
+通过组织一个私有的非空风险指针的快照的的列表到一个可以以常量预期时间搜索的哈希表中，且如果 R 设置为满足 R = H + Ω(H)，其中 H 是风险指针的总数，那么该方法可以保证在每次扫描风险指针的过程中能识别 Θ(R) 个可任意重用的节点，且能够在 O(R) 预期时间内完成。因此，处理每个退休节点直到它可以被重用的期望分摊时间复杂度是一个常量。
 
 Note that a small number of hazard pointers per thread can be used to support an arbitrary number of objects as long as that number is sufficient for supporting each object individually. For example, in a program where each thread may operate arbitrarily on hundreds of shared objects that each requires up to two hazard pointers per thread (e.g., hash tables, FIFO queues, LIFO stacks, linked lists, work queues, and priority queues), only a total of two hazard pointers are needed per thread.
 
@@ -78,8 +78,6 @@ In addition to atomic reads and writes, primitive operations on shared memory lo
 ```
 { if (*addr != exp) return false; &addr <- new; return true; }
 ```
-
-除了原子读取和写入之外，共享内存位置上的原语操作还可能包括更强的原子原语，例如 compare-and-swap（CAS）和成对的 load-linked/store -conditional（LL/SC）。CAS 有三个参数：内存位置的地址、期望值和新值。当且仅当内存位置保持预期值时，新值将以原子方式写入。布尔返回值指示是否发生写入。即 CAS(addr, exp, new) 原子地执行以下操作：
 
 除了原子读取和写入，共享内存位置上的基本操作可能包括更强的原子原语，比如 compare-and-swap（CAS）以及 load-linked/store-conditional（LL/ SC）。CAS 有三个参数：内存位置的地址，预期值和新值。当且仅当内存位置保存的是预期值时，新值将以原子方式写入。布尔返回值表示是否发生写入。即 CAS(addr, exp, new) 原子地执行以下操作：
 
