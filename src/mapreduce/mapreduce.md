@@ -598,12 +598,12 @@ public:
 		for (int i = 0; i < n; ) {
 		// Skip past leading whitespace
 		while ((i < n) && isspace(text[i]))
-		i++;
+			i++;
             
 		// Find word end
 		int start = i;
 		while ((i < n) && !isspace(text[i]))
-		i++;
+			i++;
 		if (start < i)
 			Emit(text.substr(start,i-start),"1");
 		}
