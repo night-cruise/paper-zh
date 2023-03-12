@@ -72,8 +72,6 @@ As we show, because of the combinatorial structure induced by the split-ordering
 
 We note that our design is modular: to implement the ordered items list, one can use one of several non-blocking list-based set algorithms in the literature. Potential candidates are the lock-free algorithms of Harris [2001] or Michael [2002a], or the obstruction-free algorithms of Valois[1995] or Luchangco et al. [2003]. We chose to base our presentation on the algorithm of Michael [2002a], an extension of the Harris algorithm [Harris 2001] that fits well with memory management schemes [Herlihy et al. 2002; Michael 2002b] and performs well in practice.
 
-我们注意到我们的设计是模块化的：为了实现有序项目列表，可以使用文献中几种基于非阻塞列表的集合算法之一。潜在候选是Harris[2001]或Michael[2002a]的无锁算法，或Valois[1995]或Luchangco等人[2003]的无障碍算法。我们选择将我们的演示基于Michael[2002a]的算法，这是Harris算法[Harris 2001]的扩展，非常适合内存管理方案[Herlihy等人2002；Michael 2002b]，并且在实践中表现良好。
-
 我们的设计是模块化的：要实现有序 items 链表，可以使用文献中几种基于非阻塞链表的集合算法之一。 潜在候选者是 Harris [2001] 或 Michael [2002a] 的无锁算法，或 Valois[1995] or Luchangco et al. [2003] 的 obstruction-free 算法。 我们的演示基于 Michael [2002a] 的算法，它是 Harris 算法 [Harris 2001] 的扩展，非常适合内存管理方案 [Herlihy et al. 2002; Michael 2002b] 并在实践中表现良好。
 
 ### 1.4 Complexity
