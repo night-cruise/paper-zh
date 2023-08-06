@@ -6,6 +6,7 @@
 * [MapReduce: Simplified Data Processing on Large Clusters](./src/mapreduce/mapreduce-zh.md)
 * [The Google File System](./src/google%20file%20system/google%20file%20system-zh.md)
 * [The Design of a Pratical System for Fault-Tolerant Virtual Machines](./src/fault-tolerant%20virtual%20machine/fault-tolerant%20virtual%20machine-zh.md)
+* [ZooKeeper: Wait-free coordination for Internet-scale systems](./src/zookeeper/zookeeper-zh.md)
 
 ## Chinese translation source
 
