@@ -44,7 +44,7 @@ To guarantee that update operations satisfy linearizability, we implement a lead
 
 Caching data on the client side is an important technique to increase the performance of reads. For example, it is useful for a process to cache the identifier of the current leader instead of probing ZooKeeper every time it needs to know the leader. ZooKeeper uses a watch mechanism to enable clients to cache data without managing the client cache directly. With this mechanism, a client can watch for an update to a given data object, and receive a notification upon an update. Chubby manages the client cache directly. It blocks updates to invalidate the caches of all clients caching the data being changed. Under this design, if any of these clients is slow or faulty, the update is delayed. Chubby uses leases to prevent a faulty client from blocking the system indefinitely. Leases, however, only bound the impact of slow or faulty clients, whereas ZooKeeper watches avoid the problem altogether.
 
-在客户端缓存数据是提高读取性能的一种重要技术。例如，对于一个进程来说，缓存当前领导者的标识符而不是每次需要知道领导者时都探测ZooKeeper是很有用的。ZooKeeper使用一种监视机制，使客户端可以在不直接管理客户端缓存的情况下缓存数据。通过这种机制，客户端可以监视某个数据对象的更新，并在更新时收到通知。Chubby直接管理客户端缓存。它阻塞更新以使所有缓存正在更改的数据的客户端的缓存失效。在这种设计下，如果这些客户端中的任何一个速度慢或故障，更新将被延迟。Chubby使用租约来防止故障客户端无限期地阻塞系统。然而，租约只限制了慢速或故障客户端的影响，而ZooKeeper监视则完全避免了这个问题。
+在客户端缓存数据是提高读取性能的一种重要技术。例如，对于一个进程来说，缓存当前领导者的标识符而不是每次需要知道领导者时都探测ZooKeeper是很有用的。ZooKeeper使用一种监听机制，使客户端可以在不直接管理客户端缓存的情况下缓存数据。通过这种机制，客户端可以监听某个数据对象的更新，并在更新时收到通知。Chubby直接管理客户端缓存。它阻塞更新以使所有缓存正在更改的数据的客户端的缓存失效。在这种设计下，如果这些客户端中的任何一个速度慢或故障，更新将被延迟。Chubby使用租约来防止故障客户端无限期地阻塞系统。然而，租约只限制了慢速或故障客户端的影响，而ZooKeeper监听则完全避免了这个问题。
 
 In this paper we discuss our design and implementation of ZooKeeper. With ZooKeeper, we are able to implement all coordination primitives that our applications require, even though only writes are linearizable. To validate our approach we show how we implement some coordination primitives with ZooKeeper.
 
@@ -56,15 +56,15 @@ To summarize, in this paper our main contributions are:
 
 **Coordination kernel:** We propose a wait-free coordination service with relaxed consistency guarantees for use in distributed systems. In particular, we describe our design and implementation of a *coordination kernel*, which we have used in many critical applications to implement various coordination techniques.
 
-**协调内核：**我们提出了一种无等待协调服务，用于分布式系统中的宽松一致性保证。特别是，我们描述了我们设计和实现的*协调内核*，我们已经在许多关键应用中使用它来实现各种协调技术。
+我们提出了一种无等待协调服务，用于分布式系统中的宽松一致性保证。特别是，我们描述了我们设计和实现的*协调内核*，我们已经在许多关键应用中使用它来实现各种协调技术。
 
 **Coordination recipes:** We show how ZooKeeper can be used to build higher level coordination primitives, even blocking and strongly consistent primitives, that are often used in distributed applications. 
 
-**协调配方：**我们展示了如何使用ZooKeeper构建更高级别的协调原语，甚至是阻塞和强一致性原语，这些原语通常用于分布式应用程序。
+我们展示了如何使用ZooKeeper构建更高级别的协调原语，甚至是阻塞和强一致性原语，这些原语通常用于分布式应用程序。
 
 **Experience with Coordination:** We share some of the ways that we use ZooKeeper and evaluate its performance.
 
-**协调经验：**我们分享了我们使用ZooKeeper的一些方法，并评估其性能。
+我们分享了我们使用ZooKeeper的一些方法，并评估其性能。
 
 ## 2. The ZooKeeper service
 
@@ -106,7 +106,7 @@ Additionally, when creating a new znode, a client can set a *sequential* flag. N
 
 ZooKeeper implements watches to allow clients to receive timely notifications of changes without requiring polling. When a client issues a read operation with a watch flag set, the operation completes as normal except that the server promises to notify the client when the information returned has changed. Watches are one-time triggers associated with a session; they are unregistered once triggered or the session closes. Watches indicate that a change has happened, but do not provide the change. For example, if a client issues a getData(‘‘/foo’’, true) before “/foo” is changed twice, the client will get one watch event telling the client that data for “/foo” has changed. Session events, such as connection loss events, are also sent to watch callbacks so that clients know that watch events may be delayed.
 
-ZooKeeper实现了监视器，以便客户端在无需轮询的情况下接收到变更的及时通知。当客户端发出带有监视器标志的读取操作时，操作将按正常方式完成，但服务器承诺在返回的信息发生更改时通知客户端。监视器是与会话关联的一次性触发器；一旦触发或会话关闭，它们将被注销。监视器表明已发生更改，但不提供更改。例如，如果客户端在“/foo”更改两次之前发出getData(‘‘/foo’’, true)，客户端将获得一个监视器事件，告知客户端“/foo”的数据已更改。会话事件，如连接丢失事件，也会发送到监视器回调，以便客户端知道监视器事件可能会延迟。
+ZooKeeper实现了监听器，以便客户端在无需轮询的情况下接收到变更的及时通知。当客户端发出带有监听器标志的读取操作时，操作将按正常方式完成，但服务器承诺在返回的信息发生更改时通知客户端。监听器是与会话关联的一次性触发器；一旦触发或会话关闭，它们将被注销。监听器表明已发生更改，但不提供更改。例如，如果客户端在“/foo”更改两次之前发出getData(‘‘/foo’’, true)，客户端将获得一个监听器事件，告知客户端“/foo”的数据已更改。会话事件，如连接丢失事件，也会发送到监听器回调，以便客户端知道监听器事件可能会延迟。
 
 **Data model.** The data model of ZooKeeper is essentially a file system with a simplified API and only full data reads and writes, or a key/value table with hierarchical keys. The hierarchal namespace is useful for allocating subtrees for the namespace of different applications and for setting access rights to those subtrees. We also exploit the concept of directories on the client side to build higher level primitives as we will see in section 2.4.
 
@@ -122,7 +122,7 @@ Although znodes have not been designed for general data storage, ZooKeeper does 
 
 **Sessions.** A client connects to ZooKeeper and initiates a session. Sessions have an associated timeout. Zoo Keeper considers a client faulty if it does not receive anything from its session for more than that timeout. A session ends when clients explicitly close a session handle or ZooKeeper detects that a clients is faulty. Within a session, a client observes a succession of state changes that reflect the execution of its operations. Sessions enable a client to move transparently from one server to another within a ZooKeeper ensemble, and hence persist across ZooKeeper servers.
 
-**会话。**客户端连接到ZooKeeper并启动一个会话。会话有一个关联的超时时间。如果ZooKeeper在超过该超时时间内没有收到来自会话的任何内容，它会认为客户端有问题。当客户端显式关闭会话句柄或ZooKeeper检测到客户端有问题时，会话结束。在一个会话中，客户端观察到一系列状态变化，反映了其操作的执行。会话使客户端能够在ZooKeeper集群中从一个服务器透明地移动到另一个服务器，因此在ZooKeeper服务器之间持续存在。
+客户端连接到ZooKeeper并启动一个会话。会话有一个关联的超时时间。如果ZooKeeper在超过该超时时间内没有收到来自会话的任何内容，它会认为客户端有问题。当客户端显式关闭会话句柄或ZooKeeper检测到客户端有问题时，会话结束。在一个会话中，客户端观察到一系列状态变化，反映了其操作的执行。会话使客户端能够在ZooKeeper集群中从一个服务器透明地移动到另一个服务器，因此在ZooKeeper服务器之间持续存在。
 
 ### 2.2 Client API
 
@@ -144,7 +144,7 @@ We present below a relevant subset of the ZooKeeper API, and discuss the semanti
 
 **getData(path, watch):** Returns the data and meta-data, such as version information, associated with the znode. The watch flag works in the same way as it does for exists(), except that ZooKeeper does not set the watch if the znode does not exist;
 
-返回与znode关联的数据和元数据，例如版本信息。监视标志的工作方式与exists()相同，只是如果znode不存在，ZooKeeper不会设置监视;
+返回与znode关联的数据和元数据，例如版本信息。监听标志的工作方式与exists()相同，只是如果znode不存在，ZooKeeper不会设置监听;
 
 **setData(path, data, version):** Writes data[] to znode path if the version number is the current version of the znode;
 
@@ -178,11 +178,11 @@ ZooKeeper 有两个基本顺序保证：
 
 **Linearizable writes:** all requests that update the state of ZooKeeper are serializable and respect precedence;
 
-**线性化写入：**所有更新ZooKeeper状态的请求都是可线性化的，并遵循优先级顺序;
+所有更新ZooKeeper状态的请求都是可线性化的，并遵循优先级顺序;
 
 **FIFO client order:** all requests from a given client are executed in the order that they were sent by the client.
 
-**FIFO客户端顺序：** 来自给定客户端的所有请求都按照客户端发送的顺序执行。
+来自给定客户端的所有请求都按照客户端发送的顺序执行。
 
 Note that our definition of linearizability is different from the one originally proposed by Herlihy [15], and we call it *A-linearizability* (asynchronous linearizability). In the original definition of linearizability by Herlihy, a client is only able to have one outstanding operation at a time (a client is one thread). In ours, we allow a client to have multiple outstanding operations, and consequently we can choose to guarantee no specific order for outstanding operations of the same client or to guarantee FIFO order. We choose the latter for our property. It is important to observe that all results that hold for linearizable objects also hold for A-linearizable objects because a system that satisfies A-linearizability also satisfies linearizability. Because only update requests are A-linearizable, ZooKeeper processes read requests locally at each replica. This allows the service to scale linearly as servers are added to the system.
 
@@ -206,7 +206,7 @@ Observe that distributed locks, such as the locks provided by Chubby, would help
 
 The above scheme still has a problem: what happens if a process sees that *ready* exists before the new leader starts to make a change and then starts reading the configuration while the change is in progress. This problem is solved by the ordering guarantee for the notifications: if a client is watching for a change, the client will see the notification event before it sees the new state of the system after the change is made. Consequently, if the process that reads the *ready* znode requests to be notified of changes to that znode, it will see a notification informing the client of the change before it can read any of the new configuration.
 
-上述方案仍然存在一个问题：如果一个进程在新领导者开始进行更改之前就看到 *ready* 存在，然后在更改过程中开始读取配置。这个问题通过通知的顺序保证得到解决：如果一个客户端正在监视更改，那么客户端会在看到系统更改后的新状态之前看到通知事件。因此，如果读取 *ready* znode 的进程请求被通知该 znode 的更改，它将在读取任何新配置之前看到通知客户端更改的通知。
+上述方案仍然存在一个问题：如果一个进程在新领导者开始进行更改之前就看到 *ready* 存在，然后在更改过程中开始读取配置。这个问题通过通知的顺序保证得到解决：如果一个客户端正在监听更改，那么客户端会在看到系统更改后的新状态之前看到通知事件。因此，如果读取 *ready* znode 的进程请求被通知该 znode 的更改，它将在读取任何新配置之前看到通知客户端更改的通知。
 
 Another problem can arise when clients have their own communication channels in addition to ZooKeeper. For example, consider two clients *A* and *B* that have a shared configuration in ZooKeeper and communicate through a shared communication channel. If *A* changes the shared configuration in ZooKeeper and tells *B* of the change through the shared communication channel, *B* would expect to see the change when it re-reads the configuration. If *B*’s ZooKeeper replica is slightly behind *A*’s, it may not see the new configuration. Using the above guarantees *B* can make sure that it sees the most up-to-date information by issuing a write before re-reading the configuration. To handle this scenario more efficiently ZooKeeper provides the sync request: when followed by a read, constitutes a *slow read*. sync causes a server to apply all pending write requests before processing the read without the overhead of a full write. This primitive is similar in idea to the flush primitive of ISIS [5].
 
@@ -220,11 +220,11 @@ ZooKeeper还提供以下两个活性和持久性保证：如果大多数ZooKeepe
 
 In this section, we show how to use the ZooKeeper API to implement more powerful primitives. The ZooKeeper service knows nothing about these more powerful primitives since they are entirely implemented at the client using the ZooKeeper client API. Some common primitives such as group membership and configuration management are also wait-free. For others, such as rendezvous, clients need to wait for an event. Even though ZooKeeper is wait-free, we can implement efficient blocking primitives with ZooKeeper. ZooKeeper’s ordering guarantees allow efficient reasoning about system state, and watches allow for efficient waiting.
 
-在这个部分，我们展示如何使用ZooKeeper API来实现更强大的原语。ZooKeeper服务对这些更强大的原语一无所知，因为它们完全是在客户端使用ZooKeeper客户端API实现的。一些常见的原语，如组成员关系和配置管理，也是无等待的。对于其他的，如rendezvous，客户端需要等待一个事件。尽管ZooKeeper是无等待的，我们可以用ZooKeeper实现高效的阻塞原语。ZooKeeper的顺序保证允许对系统状态进行高效的推理，而监视器允许进行高效的等待。
+在这个部分，我们展示如何使用ZooKeeper API来实现更强大的原语。ZooKeeper服务对这些更强大的原语一无所知，因为它们完全是在客户端使用ZooKeeper客户端API实现的。一些常见的原语，如组成员关系和配置管理，也是无等待的。对于其他的，如rendezvous，客户端需要等待一个事件。尽管ZooKeeper是无等待的，我们可以用ZooKeeper实现高效的阻塞原语。ZooKeeper的顺序保证允许对系统状态进行高效的推理，而监听器允许进行高效的等待。
 
 **Configuration Management** ZooKeeper can be used to implement dynamic configuration in a distributed application. In its simplest form configuration is stored in a znode, *zc*. Processes start up with the full pathname of *zc*. Starting processes obtain their configuration by reading *zc* with the watch flag set to true. If the configuration in *zc* is ever updated, the processes are notified and read the new configuration, again setting the watch flag to true.
 
-**配置管理** ZooKeeper 可用于在分布式应用程序中实现动态配置。在其最简单的形式中，配置存储在一个 znode 中：*zc*。进程启动时带有 *zc* 的完整路径名。启动进程通过将 watch 标志设置为 true 来读取 *zc* 以获取其配置。如果 *zc* 中的配置更新，进程会收到通知并读取新的配置，再次将 watch 标志设置为 true。
+ZooKeeper 可用于在分布式应用程序中实现动态配置。在其最简单的形式中，配置存储在一个 znode 中：*zc*。进程启动时带有 *zc* 的完整路径名。启动进程通过将 watch 标志设置为 true 来读取 *zc* 以获取其配置。如果 *zc* 中的配置更新，进程会收到通知并读取新的配置，再次将 watch 标志设置为 true。
 
 Note that in this scheme, as in most others that use watches, watches are used to make sure that a process has the most recent information. For example, if a process watching *zc* is notified of a change to *zc* and before it can issue a read for *zc* there are three more changes to *zc*, the process does not receive three more notification events. This does not affect the behavior of the process, since those three events would have simply notified the process of something it already knows: the information it has for *zc* is stale.
 
@@ -232,11 +232,11 @@ Note that in this scheme, as in most others that use watches, watches are used t
 
 **Rendezvous** Sometimes in distributed systems, it is not always clear a priori what the final system configuration will look like. For example, a client may want to start a master process and several worker processes, but the starting processes is done by a scheduler, so the client does not know ahead of time information such as addresses and ports that it can give the worker processes to connect to the master. We handle this scenario with ZooKeeper using a rendezvous znode, *zr*, which is an node created by the client. The client passes the full pathname of *zr* as a startup parameter of the master and worker processes. When the master starts it fills in *zr* with information about addresses and ports it is using. When workers start, they read *zr* with watch set to true. If *zr* has not been filled in yet, the worker waits to be notified when *zr* is updated. If *zr* is an ephemeral node, master and worker processes can watch for *zr* to be deleted and clean themselves up when the client ends.
 
-**Rendezvous** 在分布式系统中，有时候不一定能预先清楚最终的系统配置会是怎样的。例如，一个客户端可能希望启动一个主进程和多个工作进程，但启动进程的工作由调度器完成，因此客户端无法提前知道给工作进程提供的用于连接到主进程的地址和端口等信息。我们使用ZooKeeper处理这种情况，使用一个称为"rendezvous znode"的节点*zr*，它是由客户端创建的。客户端将*zr*的完整路径名作为主进程和工作进程的启动参数传递。当主进程启动时，它会在*zr*中填写所使用的地址和端口的信息。当工作进程启动时，它们会读取*zr*并将watch设置为true。如果*zr*尚未填写完毕，工作进程将会等待并在*zr*更新时收到通知。如果*zr*是一个临时节点，主进程和工作进程可以监视*zr*是否被删除，并在客户端结束时进行清理。
+在分布式系统中，有时候不一定能预先清楚最终的系统配置会是怎样的。例如，一个客户端可能希望启动一个主进程和多个工作进程，但启动进程的工作由调度器完成，因此客户端无法提前知道给工作进程提供的用于连接到主进程的地址和端口等信息。我们使用ZooKeeper处理这种情况，使用一个称为"rendezvous znode"的节点*zr*，它是由客户端创建的。客户端将*zr*的完整路径名作为主进程和工作进程的启动参数传递。当主进程启动时，它会在*zr*中填写所使用的地址和端口的信息。当工作进程启动时，它们会读取*zr*并将watch设置为true。如果*zr*尚未填写完毕，工作进程将会等待并在*zr*更新时收到通知。如果*zr*是一个临时节点，主进程和工作进程可以监听*zr*是否被删除，并在客户端结束时进行清理。
 
 **Group Membership** We take advantage of ephemeral nodes to implement group membership. Specifically, we use the fact that ephemeral nodes allow us to see the state of the session that created the node. We start by designating a znode, *zg* to represent the group. When a process member of the group starts, it creates an ephemeral child znode under *zg*. If each process has a unique name or identifier, then that name is used as the name of the child znode; otherwise, the process creates the znode with the SEQUENTIAL flag to obtain a unique name assignment. Processes may put process information in the data of the child znode, addresses and ports used by the process, for example.
 
-**组成员** 我们利用临时节点来实现群组成员关系。具体而言，我们利用临时节点可以查看创建节点的session状态。我们首先指定一个名为*zg*的znode来表示群组。当群组的一个成员进程启动时，它会在*zg*下创建一个临时子节点。如果每个进程都有一个唯一的名称或标识符，那么该名称将被用作子节点的名称；否则，进程将使用SEQUENTIAL标志创建节点以获得唯一的名称分配。进程可以在子节点的数据中添加进程的信息，例如使用的地址和端口。
+我们利用临时节点来实现群组成员关系。具体而言，我们利用临时节点可以查看创建节点的session状态。我们首先指定一个名为*zg*的znode来表示群组。当群组的一个成员进程启动时，它会在*zg*下创建一个临时子节点。如果每个进程都有一个唯一的名称或标识符，那么该名称将被用作子节点的名称；否则，进程将使用SEQUENTIAL标志创建节点以获得唯一的名称分配。进程可以在子节点的数据中添加进程的信息，例如使用的地址和端口。
 
 After the child znode is created under *zg* the process starts normally. It does not need to do anything else. If the process fails or ends, the znode that represents it under *zg* is automatically removed.
 
@@ -248,7 +248,7 @@ Processes can obtain group information by simply listing the children of *zg*. I
 
 **Simple Locks** Although ZooKeeper is not a lock service, it can be used to implement locks. Applications using ZooKeeper usually use synchronization primitives tailored to their needs, such as those shown above. Here we show how to implement locks with ZooKeeper to show that it can implement a wide variety of general synchronization primitives.
 
-**简单锁** 尽管ZooKeeper不是锁服务，但它可以用来实现锁。使用ZooKeeper的应用程序通常使用针对其需求的同步原语，例如上面所示的那些。在这里，我们展示了如何使用ZooKeeper实现锁，以表明它可以实现各种各样的通用同步原语。
+尽管ZooKeeper不是锁服务，但它可以用来实现锁。使用ZooKeeper的应用程序通常使用针对其需求的同步原语，例如上面所示的那些。在这里，我们展示了如何使用ZooKeeper实现锁，以表明它可以实现各种各样的通用同步原语。
 
 The simplest lock implementation uses “lock files”. The lock is represented by a znode. To acquire a lock, a client tries to create the designated znode with the EPHEMERAL flag. If the create succeeds, the client holds the lock. Otherwise, the client can read the znode with the watch flag set to be notified if the current leader dies. A client releases the lock when it dies or explicitly deletes the znode. Other clients that are waiting for a lock try again to acquire a lock once they observe the znode being deleted.
 
@@ -260,13 +260,13 @@ While this simple locking protocol works, it does have some problems. First, it 
 
 **Simple Locks without Herd Effect** We define a lock znode *l* to implement such locks. Intuitively we line up all the clients requesting the lock and each client obtains the lock in order of request arrival. Thus, clients wishing to obtain the lock do the following:
 
-**没有惊群效应的简单锁** 我们定义一个锁znode *l* 来实现这种锁。直观地说，我们将请求锁的所有客户端排成一行，每个客户端按请求到达的顺序获得锁定。因此，希望获得锁的客户端执行以下操作：
+我们定义一个锁 znode 来实现这种锁。直观地说，我们将请求锁的所有客户端排成一行，每个客户端按请求到达的顺序获得锁定。因此，希望获得锁的客户端执行以下操作：
 
 ![](./imgs/Code1.png)
 
 The use of the SEQUENTIAL flag in line 1 of Lock orders the client’s attempt to acquire the lock with respect to all other attempts. If the client’s znode has the lowest sequence number at line 3, the client holds the lock. Otherwise, the client waits for deletion of the znode that either has the lock or will receive the lock before this client’s znode. By only watching the znode that precedes the client’s znode, we avoid the herd effect by only waking up one process when a lock is released or a lock request is abandoned. Once the znode being watched by the client goes away, the client must check if it now holds the lock. (The previous lock request may have been abandoned and there is a znode with a lower sequence number still waiting for or holding the lock.)
 
-在 Lock 的第 1 行中使用 SEQUENTIAL 标志，按顺序排列客户端尝试获取锁的顺序。如果客户端的 znode 在第 3 行具有最低序列号，则客户端持有锁。否则，客户端等待删除前驱 znode2，znode2 持有锁或之前的 node 接收锁。通过仅监视 znode2，我们避免了惊群效应，当锁被释放或锁请求被丢弃时，只唤醒一个进程。一旦客户端watch的 znode 消失，客户端必须检查它现在是否持有锁。（之前的锁请求可能已被丢弃，仍有一个具有较低序列号的 znode 在等待或持有锁。）
+在 Lock 的第 1 行中使用 SEQUENTIAL 标志，按顺序排列客户端尝试获取锁的顺序。如果客户端的 znode 在第 3 行具有最低序列号，则客户端持有锁。否则，客户端等待删除前驱 znode2，znode2 持有锁或之前的 node 接收锁。通过仅监听 znode2，我们避免了惊群效应，当锁被释放或锁请求被丢弃时，只唤醒一个进程。一旦客户端watch的 znode 消失，客户端必须检查它现在是否持有锁。（之前的锁请求可能已被丢弃，仍有一个具有较低序列号的 znode 在等待或持有锁。）
 
 Releasing a lock is as simple as deleting the znode *n* that represents the lock request. By using the EPHEMERAL flag on creation, processes that crash will automatically cleanup any lock requests or release any locks that they may have.
 
@@ -324,7 +324,7 @@ Figure 2 shows the read and write traffic for a ZooKeeper server used by FS thro
 
 **Katta** Katta [17] is a distributed indexer that uses ZooKeeper for coordination, and it is an example of a non-Yahoo! application. Katta divides the work of indexing using shards. A master server assigns shards to slaves and tracks progress. Slaves can fail, so the master must redistribute load as slaves come and go. The master can also fail, so other servers must be ready to take over in case of failure. Katta uses ZooKeeper to track the status of slave servers and the master (**group membership**), and to handle master failover (**leader election**). Katta also uses ZooKeeper to track and propagate the assignments of shards to slaves (**configuration management**).
 
-**Katta**是一个分布式索引器，它使用ZooKeeper进行协调，是一个非雅虎的应用程序示例。Katta通过分片来进行索引工作。master服务器将分片分配给follower服务器并跟踪进度。follower服务器可能会失败，因此master服务器必须在follower服务器出现故障后重新分配负载。master服务器也可能会失败，因此其他服务器必须准备好在发生故障时接管工作。Katta使用ZooKeeper来跟踪follower服务器和master服务器的状态（**群组成员关系**），并处理master服务器的故障转移（**领导者选举**）。Katta还使用ZooKeeper来跟踪和传递分片分配给follower服务器的任务（**配置管理**）。
+**Katta** 是一个分布式索引器，它使用ZooKeeper进行协调，是一个非雅虎的应用程序示例。Katta通过分片来进行索引工作。master服务器将分片分配给follower服务器并跟踪进度。follower服务器可能会失败，因此master服务器必须在follower服务器出现故障后重新分配负载。master服务器也可能会失败，因此其他服务器必须准备好在发生故障时接管工作。Katta使用ZooKeeper来跟踪follower服务器和master服务器的状态（**群组成员关系**），并处理master服务器的故障转移（**领导者选举**）。Katta还使用ZooKeeper来跟踪和传递分片分配给follower服务器的任务（**配置管理**）。
 
 **Yahoo! Message Broker** Yahoo! Message Broker (YMB) is a distributed publish-subscribe system. The system manages thousands of topics that clients can publish messages to and receive messages from. The topics are distributed among a set of servers to provide scalability. Each topic is replicated using a primary-backup scheme that ensures messages are replicated to two machines to ensure reliable message delivery. The servers that makeup YMB use a shared-nothing distributed architecture which makes coordination essential for correct operation. YMB uses ZooKeeper to manage the distribution of topics (**configuration metadata**), deal with failures of machines in the system (**failure detection** and **group membership**), and control system operation.
 
@@ -334,7 +334,7 @@ Figure 2 shows the read and write traffic for a ZooKeeper server used by FS thro
 
 Figure 3 shows part of the znode data layout for YMB. Each broker domain has a znode called nodes that has an ephemeral znode for each of the active servers that compose the YMB service. Each YMB server creates an ephemeral znode under nodes with load and status information providing both group membership and status information through ZooKeeper. Nodes such as shutdown and migration prohibited are monitored by all of the servers that make up the service and allow centralized control of YMB. The topics directory has a child znode for each topic managed by YMB. These topic znodes have child znodes that indicate the primary and backup server for each topic along with the subscribers of that topic. The primary and backup server znodes not only allow servers to discover the servers in charge of a topic, but they also manage **leader election** and server crashes.
 
-图3显示了YMB的部分znode数据布局。每个代理域都有一个名为nodes的znode，其中包含了组成YMB服务的活动服务器的临时znode。每个YMB服务器在nodes下创建一个临时znode，其中包含负载和状态信息，通过ZooKeeper提供群组成员和状态信息。诸如shutdown和migration prohibited之类的节点被所有组成服务的服务器监视，并允许对YMB进行集中控制。topics目录是YMB管理的每个主题对应的子节点。主题节点都有子节点，用于表示每个主题的主服务器和备份服务器，以及该主题的订阅者。主服务器和备份服务器的znode不仅允许服务器发现负责主题的服务器，还管理**领导者选举**和服务器崩溃。
+图3显示了YMB的部分znode数据布局。每个代理域都有一个名为nodes的znode，其中包含了组成YMB服务的活动服务器的临时znode。每个YMB服务器在nodes下创建一个临时znode，其中包含负载和状态信息，通过ZooKeeper提供群组成员和状态信息。诸如shutdown和migration prohibited之类的节点被所有组成服务的服务器监听，并允许对YMB进行集中控制。topics目录是YMB管理的每个主题对应的子节点。主题节点都有子节点，用于表示每个主题的主服务器和备份服务器，以及该主题的订阅者。主服务器和备份服务器的znode不仅允许服务器发现负责主题的服务器，还管理**领导者选举**和服务器崩溃。
 
 ## 4. ZooKeeper Implementation
 
@@ -360,7 +360,7 @@ As part of the agreement protocol write requests are forwarded to a single serve
 
 Since the messaging layer is atomic, we guarantee that the local replicas never diverge, although at any point in time some servers may have applied more transactions than others. Unlike the requests sent from clients, the transactions are idempotent. When the leader receives a write request, it calculates what the state of the system will be when the write is applied and transforms it into a transaction that captures this new state. The future state must be calculated because there may be outstanding transactions that have not yet been applied to the database. For example, if a client does a conditional setData and the version number in the request matches the future version number of the znode being updated, the service generates a setData TXN that contains the new data, the new version number, and updated time stamps. If an error occurs, such as mismatched version numbers or the znode to be updated does not exist, an error TXN is generated instead.
 
-由于消息传递层是原子的，我们保证本地副本永远不会偏离，尽管在任何时候，某些服务器可能已经应用了比其他服务器更多的事务。与来自客户端的请求不同，事务是幂等的。当领导者收到写入请求时，它计算执行写入后系统的状态，并将其转换为捕获此新状态的事务。future状态必须被计算，因为可能存在尚未应用到数据库的未完成事务。例如，如果客户端执行了一个有条件的setData操作，并且请求中的版本号与要更新的znode的future版本号匹配，服务将生成一个setData TXN，其中包含新数据、新版本号和更新时间戳。如果发生错误，比如版本号不匹配或要更新的znode不存在，将会生成一个error TXN。
+由于消息传递层是原子的，我们保证本地副本的状态永远不会偏离，尽管在任何时候，某些服务器可能已经应用了比其他服务器更多的事务。与来自客户端的请求不同，事务是幂等的。当领导者收到写入请求时，它计算执行写入后系统的状态，并将其转换为产生此新状态的事务（**这个事务将会是幂等的**）。future状态必须被计算，因为可能存在尚未应用到数据库的未完成事务。例如，如果客户端执行了一个有条件的setData操作，并且请求中的版本号与要更新的znode的future版本号匹配，服务将生成一个setData TXN，其中包含新数据、新版本号和更新时间戳。如果发生错误，比如版本号不匹配或要更新的znode不存在，将会生成一个error TXN。
 
 ### 4.2 Atomic Broadcast
 
@@ -370,21 +370,21 @@ All requests that update ZooKeeper state are forwarded to the leader. The leader
 
 To achieve high throughput, ZooKeeper tries to keep the request processing pipeline full. It may have thousands of requests in different parts of the processing pipeline. Because state changes depend on the application of previous state changes, Zab provides stronger order guarantees than regular atomic broadcast. More specifically, Zab guarantees that changes broadcast by a leader are delivered in the order they were sent and all changes from previous leaders are delivered to an established leader before it broadcasts its own changes.
 
-为了实现高吞吐量，ZooKeeper尽量保持请求处理管道处于满负荷状态。它可能在处理管道的不同部分有数千个请求。由于状态更改依赖于先前状态更改的应用，Zab提供比常规原子广播更强的顺序保证。具体而言，Zab保证由领导者广播的更改按发送顺序传递，并且在广播自己的更改之前，将所有先前领导者的更改传递给已建立的领导者。
+为了实现高吞吐量，ZooKeeper尽量保持请求处理管道处于满负荷状态。它可能在处理管道的不同部分有数千个请求。由于状态更改依赖于先前状态更改的应用，Zab提供比常规原子广播更强的顺序保证。具体而言，Zab保证由领导者广播的更改按发送顺序传递，并且在广播自己的更改之前，将所有先前领导者的更改传递给已建立的领导者（这里的的先前领导者的更改应该就是日志条目）。
 
 There are a few implementation details that simplify our implementation and give us excellent performance. We use TCP for our transport so message order is maintained by the network, which allows us to simplify our implementation. We use the leader chosen by Zab as the ZooKeeper leader, so that the same process that creates transactions also proposes them. We use the log to keep track of proposals as the write-ahead log for the in-memory database, so that we do not have to write messages twice to disk.
 
-有一些实现细节简化了我们的实现并提供了出色的性能。我们使用TCP作为传输协议，因此消息顺序由网络维护，这使得我们的实现更加简化。我们使用Zab选择的领导者作为ZooKeeper的领导者，这样同一个过程既能创建事务也能提议它们。我们使用日志作为内存数据库的预写日志来跟踪提议，这样我们就不需要将消息写入磁盘两次。
+有一些实现细节简化了我们的实现并提供了出色的性能。我们使用TCP作为传输协议，因此消息顺序由网络维护，这使得我们的实现更加简化。我们使用Zab选择的领导者作为ZooKeeper的领导者，这样同一个进程既能创建事务也能提议它们。我们使用日志作为内存数据库的预写日志来跟踪提议，这样我们就不需要将消息写入磁盘两次。
 
 During normal operation Zab does deliver all messages in order and exactly once, but since Zab does not persistently record the id of every message delivered, Zab may redeliver a message during recovery. Because we use idempotent transactions, multiple delivery is acceptable as long as they are delivered in order. In fact, ZooKeeper requires Zab to redeliver at least all messages that were delivered after the start of the last snapshot.
 
-在正常操作过程中，Zab确实按顺序准确地传递了所有消息，但由于Zab没有持久记录每个已传递消息的ID，因此Zab在恢复过程中可能会重新传递消息。由于我们使用幂等事务，只要按顺序传递，多次传递是可以接受的。实际上，ZooKeeper要求Zab至少重新传递自最后一个快照开始后传递的所有消息。
+在正常操作过程中，Zab确实按顺序准确地传递了所有消息，但由于Zab没有持久记录每个已传递消息的ID，因此Zab在恢复过程中可能会重新传递消息（**没看懂？为什么没有记录消息ID就必须重新传递消息，还有这个消息ID到底是什么？**）。由于我们使用幂等事务，只要按顺序传递，多次传递是可以接受的。实际上，ZooKeeper要求Zab至少重新传递自最后一个快照开始后传递的所有消息。
 
 ### 4.3 Replicated Database
 
 Each replica has a copy in memory of the ZooKeeper state. When a ZooKeeper server recovers from a crash, it needs to recover this internal state. Replaying all delivered messages to recover state would take prohibitively long after running the server for a while, so ZooKeeper uses periodic snapshots and only requires redelivery of messages since the start of the snapshot. We call ZooKeeper snapshots *fuzzy snapshots* since we do not lock the ZooKeeper state to take the snapshot; instead, we do a depth first scan of the tree atomically reading each znode’s data and meta-data and writing them to disk. Since the resulting fuzzy snapshot may have applied some subset of the state changes delivered during the generation of the snapshot, the result may not correspond to the state of ZooKeeper at any point in time. However, since state changes are idempotent, we can apply them twice as long as we apply the state changes in order.
 
-每个副本在内存中都有ZooKeeper状态的副本。当ZooKeeper服务器从崩溃中恢复时，需要恢复这个内部状态。重放所有已传递的消息以恢复状态在运行服务器一段时间后会花费过长的时间，因此ZooKeeper使用定期快照，并且只需要重新传递自快照开始后的消息。我们称ZooKeeper快照为“模糊快照”，因为我们不会锁定ZooKeeper状态以进行快照；相反，我们会对树进行深度优先扫描，原子地读取每个znode的数据和元数据，并将其写入磁盘。由于生成快照期间可能已经应用了一些状态更改的子集，因此生成的模糊快照可能与ZooKeeper在任何时间点的状态不一致。然而，由于状态更改是幂等的，只要按顺序应用状态更改，我们可以将它们应用两次。
+每个副本在内存中都有ZooKeeper状态的副本。当ZooKeeper服务器从崩溃中恢复时，需要恢复这个内部状态。重放所有已传递的消息以恢复状态在运行服务器一段时间后会花费过长的时间，因此ZooKeeper使用定期快照，并且只需要重新传递自快照开始后的消息。我们称ZooKeeper快照为“模糊快照”，因为我们不会锁定ZooKeeper状态以进行快照；相反，我们会对树进行深度优先扫描，原子地读取每个znode的数据和元数据，并将其写入磁盘。由于生成快照期间可能已经应用了一些状态更改的子集，因此生成的模糊快照可能与ZooKeeper在任何时间点的状态不一致。然而，由于状态更改是幂等的，只要按顺序应用状态更改，我们可以将它们应用两次。（**通过版本号保证状态更改是幂等的**）
 
 For example, assume that in a ZooKeeper data tree two nodes /foo and /goo have values f1 and g1 respectively and both are at version 1 when the fuzzy snapshot begins, and the following stream of state changes arrive having the form ⟨transactionType, path, value, new-version⟩:
 
@@ -400,7 +400,7 @@ After processing these state changes, /foo and /goo have values f3 and g2 with v
 
 When a server processes a write request, it also sends out and clears notifications relative to any watch that corresponds to that update. Servers process writes in order and do not process other writes or reads concurrently. This ensures strict succession of notifications. Note that servers handle notifications locally. Only the server that a client is connected to tracks and triggers notifications for that client.
 
-当服务器处理写请求时，它还会发送并清除与该更新对应的任何watch的通知。服务器按顺序处理写操作，不会同时处理其他写操作或读操作。这确保了通知的严格顺序。请注意，服务器在本地处理通知。只有客户端连接的服务器会跟踪和触发该客户端的通知。
+当服务器处理写请求时，它还会发送并清除与该更新关联的任何watch的通知。服务器按顺序处理写操作，不会同时处理其他写操作或读操作。这确保了通知的严格顺序。请注意，服务器在本地处理通知。只有客户端连接的服务器会跟踪和触发该客户端的通知。
 
 Read requests are handled locally at each server. Each read request is processed and tagged with a *zxid* that corresponds to the last transaction seen by the server. This *zxid* defines the partial order of the read requests with respect to the write requests. By processing reads locally, we obtain excellent read performance because it is just an in-memory operation on the local server, and there is no disk activity or agreement protocol to run. This design choice is key to achieving our goal of excellent performance with read-dominant workloads.
 
@@ -408,11 +408,11 @@ Read requests are handled locally at each server. Each read request is processed
 
 One drawback of using fast reads is not guaranteeing precedence order for read operations. That is, a read operation may return a stale value, even though a more recent update to the same znode has been committed. Not all of our applications require precedence order, but for applications that do require it, we have implemented sync. This primitive executes asynchronously and is ordered by the leader after all pending writes to its local replica. To guarantee that a given read operation returns the latest updated value, a client calls sync followed by the read operation. The FIFO order guarantee of client operations together with the global guarantee of sync enables the result of the read operation to reflect any changes that happened before the sync was issued. In our implementation, we do not need to atomically broadcast sync as we use a leader-based algorithm, and we simply place the sync operation at the end of the queue of requests between the leader and the server executing the call to sync. In order for this to work, the follower must be sure that the leader is still the leader. If there are pending transactions that commit, then the server does not suspect the leader. If the pending queue is empty, the leader needs to issue a null transaction to commit and orders the sync after that transaction. This has the nice property that when the leader is under load, no extra broadcast traffic is generated. In our implementation, timeouts are set such that leaders realize they are not leaders before followers abandon them, so we do not issue the null transaction.
 
-使用快速读取的一个缺点是无法保证读操作的优先顺序。也就是说，即使对同一个znode的更新已经提交，读操作可能仍然返回旧值。并不是所有的应用都需要优先顺序，但对于确实需要的应用，我们已经实现了同步操作。该原语以异步方式执行，并且在所有待处理写操作提交到其本地副本后由领导者进行排序。为了确保给定的读操作返回最新的更新值，客户端在读操作之前调用同步操作。客户端操作的FIFO顺序保证以及同步的全局保证使得读操作的结果能够反映在发出同步操作之前发生的任何更改。在我们的实现中，我们不需要原子地广播同步操作，因为我们使用基于领导者的算法，我们只需将同步操作放置在领导者和执行同步调用的服务器之间请求队列的末尾。为了使这个工作正常，跟随者节点必须确信领导者仍然是领导者。如果有待处理的事务提交，那么服务器不会怀疑领导者的地位。如果待处理队列为空，领导者需要发出一个空事务以提交，并在该事务之后对同步操作进行排序。这样做的好处是，当领导者负载较重时，不会产生额外的广播流量。在我们的实现中，设置超时时间使得跟随者节点在放弃领导者之前让领导者意识到它们不再是领导者，因此我们不需要发出空事务。
+使用快速读取的一个缺点是无法保证读操作的优先顺序。也就是说，即使对同一个znode的更新已经提交，读操作可能仍然返回旧值。并不是所有的应用都需要优先顺序，但对于确实需要的应用，我们实现了同步操作。该原语以异步方式执行，并且在所有待处理写操作提交到其本地副本后由领导者进行排序。为了确保给定的读操作返回最新的更新值，客户端在读操作之前调用同步操作。客户端操作的FIFO顺序保证以及同步更改的全局保证使得读操作的结果能够反映在发出同步操作之前发生的所有更改。在我们的实现中，我们不需要原子地广播同步操作，因为我们使用基于领导者的算法，我们只需将同步操作放置在领导者和执行同步调用的服务器之间请求队列的末尾。（为了使这个工作正常，跟随者节点必须确信领导者仍然是领导者。如果有待处理的事务提交，那么服务器不会怀疑领导者的地位。如果待处理队列为空，领导者需要发出一个空事务以提交，并在该事务之后对同步操作进行排序。这样做的好处是，当领导者负载较重时，不会产生额外的广播流量）（**没看懂？**）。在我们的实现中，设置超时时间使得跟随者节点在放弃领导者之前让领导者意识到它们不再是领导者，因此我们不需要发出空事务。
 
 ZooKeeper servers process requests from clients in FIFO order. Responses include the *zxid* that the response is relative to. Even heartbeat messages during intervals of no activity include the last *zxid* seen by the server that the client is connected to. If the client connects to a new server, that new server ensures that its view of the Zoo-Keeper data is at least as recent as the view of the client by checking the last *zxid* of the client against its last *zxid*. If the client has a more recent view than the server, th server does not reestablish the session with the client until the server has caught up. The client is guaranteed to be able to find another server that has a recent view of the system since the client only sees changes that have been replicated to a majority of the ZooKeeper servers. This behavior is important to guarantee durability.
 
-ZooKeeper服务器按照FIFO的顺序处理客户端的请求。响应包括与响应相关的zxid 。即使在没有活动的间隔期间的心跳消息中，也包括客户端连接的服务器所看到的最后一个 zxid 。如果客户端连接到一个新的服务器，该新服务器通过检查客户端的最后一个 zxid 与自己的最后一个 zxid 相比，确保其对ZooKeeper数据的视图至少与客户端的视图一样新。如果客户端的视图比服务器更新，服务器将在赶上之前不会重新与客户端建立会话。客户端可确保能够找到另一个具有系统最新视图的服务器，因为客户端只能看到已经复制到大多数ZooKeeper服务器的更改。这种行为对于保证持久性非常重要。
+ZooKeeper服务器按照FIFO的顺序处理客户端的请求。响应包括与响应关联 的zxid 。即使在没有活动的间隔期间的心跳消息中，也包含客户端连接的服务器所看到的最后一个 zxid 。如果客户端连接到一个新的服务器，该新服务器通过检查客户端的最后一个 zxid 与自己的最后一个 zxid 相比，确保其对ZooKeeper数据的视图至少与客户端的视图一样新。如果客户端的视图比服务器更新，服务器将在赶上之前不会重新与客户端建立会话。客户端保证能够找到另一个具有系统最新视图的服务器，因为客户端只能看到已经复制到大多数ZooKeeper服务器的更改。这种行为对于保证持久性非常重要。
 
 To detect client session failures, ZooKeeper uses timeouts. The leader determines that there has been a failure if no other server receives anything from a client session within the session timeout. If the client sends requests frequently enough, then there is no need to send any other message. Otherwise, the client sends heartbeat messages during periods of low activity. If the client cannot communicate with a server to send a request or heartbeat, it connects to a different ZooKeeper server to re-establish its session. To prevent the session from timing out, the ZooKeeper client library sends a heartbeat after the session has been idle for *s/*3 ms and switch to a new server if it has not heard from a server for 2*s/*3 ms, where *s* is the session timeout in milliseconds.
 
@@ -526,7 +526,7 @@ ZooKeeper 的目标是提供一种服务，以缓解分布式应用程序中协�
 
 We are not the first to propose a system for the coordination of distributed applications. Some early systems propose a distributed lock service for transactional applications [13], and for sharing information in clusters of computers [19]. More recently, Chubby proposes a system to manage advisory locks for distributed applications [6]. Chubby shares several of the goals of ZooKeeper. It also has a file-system-like interface, and it uses an agreement protocol to guarantee the consistency of the replicas. However, ZooKeeper is not a lock service. It can be used by clients to implement locks, but there are no lock operations in its API. Unlike Chubby, ZooKeeper allows clients to connect to any ZooKeeper server, not just the leader. ZooKeeper clients can use their local replicas to serve data and manage watches since its consistency model is much more relaxed than Chubby. This enables ZooKeeper to provide higher performance than Chubby, allowing applications to make more extensive use of ZooKeeper.
 
-我们并非第一个提出分布式应用协调系统的人。一些早期系统提出了用于事务应用程序[13]和计算机集群中共享信息[19]的分布式锁服务。更近期地，Chubby 提出了一种用于分布式应用程序的建议锁管理系统[6]。Chubby 与 ZooKeeper 的几个目标相同。它还具有类似文件系统的界面，并使用一致性协议来保证副本的一致性。然而，ZooKeeper 不是锁服务。客户端可以使用它来实现锁，但其 API 中没有锁操作。与 Chubby 不同，ZooKeeper 允许客户端连接到任何 ZooKeeper 服务器，而不仅仅是领导者。ZooKeeper 客户端可以使用其本地副本提供数据和管理监视，因为其一致性模型比 Chubby 更为宽松。这使得 ZooKeeper 能够提供比 Chubby 更高的性能，从而使应用程序能够更广泛地使用 ZooKeeper。
+我们并非第一个提出分布式应用协调系统的人。一些早期系统提出了用于事务应用程序[13]和计算机集群中共享信息[19]的分布式锁服务。更近期地，Chubby 提出了一种用于分布式应用程序的建议锁管理系统[6]。Chubby 与 ZooKeeper 的几个目标相同。它还具有类似文件系统的界面，并使用一致性协议来保证副本的一致性。然而，ZooKeeper 不是锁服务。客户端可以使用它来实现锁，但其 API 中没有锁操作。与 Chubby 不同，ZooKeeper 允许客户端连接到任何 ZooKeeper 服务器，而不仅仅是领导者。ZooKeeper 客户端可以使用其本地副本提供数据和管理监听，因为其一致性模型比 Chubby 更为宽松。这使得 ZooKeeper 能够提供比 Chubby 更高的性能，从而使应用程序能够更广泛地使用 ZooKeeper。
 
 There have been fault-tolerant systems proposed in the literature with the goal of mitigating the problem of building fault-tolerant distributed applications. One early system is ISIS [5]. The ISIS system transforms abstract type specifications into fault-tolerant distributed objects, thus making fault-tolerance mechanisms transparent to users. Horus [30] and Ensemble [31] are systems that evolved from ISIS. ZooKeeper embraces the notion of virtual synchrony of ISIS. Finally, Totem guarantees total order of message delivery in an architecture that exploits hardware broadcasts of local area networks [22]. ZooKeeper works with a wide variety of network topologies which motivated us to rely on TCP connections between server processes and not assume any special topology or hardware features. We also do not expose any of the ensemble communication used internally in ZooKeeper.
 
@@ -542,11 +542,11 @@ Boxwood [21] is a system that uses distributed lock servers. Boxwood provides hi
 
 ZooKeeper resembles a small file system, but it only provides a small subset of the file system operations and adds functionality not present in most file systems such as ordering guarantees and conditional writes. ZooKeeper watches, however, are similar in spirit to the cache callbacks of AFS [16].
 
-ZooKeeper类似于一个小型文件系统，但它只提供了文件系统操作的一小部分，并添加了大多数文件系统中不存在的功能，如排序保证和条件写入。然而，Zoo-Keeper的监视与AFS[16]的缓存回调在精神上是相似的。
+ZooKeeper类似于一个小型文件系统，但它只提供了文件系统操作的一小部分，并添加了大多数文件系统中不存在的功能，如排序保证和条件写入。然而，Zoo-Keeper的监听与AFS[16]的缓存回调在精神上是相似的。
 
 Sinfonia [2] introduces *mini-transactions*, a new paradigm for building scalable distributed systems. Sinfonia has been designed to store application data, whereas ZooKeeper stores application metadata. ZooKeeper keeps its state fully replicated and in memory for high performance and consistent latency. Our use of file system like operations and ordering enables functionality similar to mini-transactions. The znode is a convenient abstraction upon which we add watches, a functionality missing in Sinfonia. Dynamo [11] allows clients to get and put relatively small (less than 1M) amounts of data in a distributed key-value store. Unlike ZooKeeper, the key space in Dynamo is not hierarchal. Dynamo also does not provide strong durability and consistency guarantees for writes, but instead resolves conflicts on reads.
 
-Sinfonia [2] 介绍了*迷你事务*，这是一种构建可扩展分布式系统的新范式。Sinfonia 旨在存储应用程序数据，而 ZooKeeper 存储应用程序元数据。ZooKeeper 保持其状态完全复制并存储在内存中，以实现高性能和一致的延迟。我们使用类似文件系统的操作和排序，实现类似迷你事务的功能。znode 是一个方便的抽象，我们在其基础上添加了监视器，这是 Sinfonia 中缺少的功能。Dynamo [11] 允许客户端在分布式键值存储中获取和存储相对较小（小于 1M）的数据量。与 ZooKeeper 不同，Dynamo 中的键空间不是分层的。Dynamo 也不为写操作提供强大的持久性和一致性保证，而是在读取时解决冲突。
+Sinfonia [2] 介绍了*迷你事务*，这是一种构建可扩展分布式系统的新范式。Sinfonia 旨在存储应用程序数据，而 ZooKeeper 存储应用程序元数据。ZooKeeper 保持其状态完全复制并存储在内存中，以实现高性能和一致的延迟。我们使用类似文件系统的操作和排序，实现类似迷你事务的功能。znode 是一个方便的抽象，我们在其基础上添加了监听器，这是 Sinfonia 中缺少的功能。Dynamo [11] 允许客户端在分布式键值存储中获取和存储相对较小（小于 1M）的数据量。与 ZooKeeper 不同，Dynamo 中的键空间不是分层的。Dynamo 也不为写操作提供强大的持久性和一致性保证，而是在读取时解决冲突。
 
 DepSpace [4] uses a tuple space to provide a Byzantine fault-tolerant service. Like ZooKeeper DepSpace uses a simple server interface to implement strong synchronization primitives at the client. While DepSpace’s performance is much lower than ZooKeeper, it provides stronger fault tolerance and confidentiality guarantees.
 
@@ -556,7 +556,7 @@ DepSpace [4] 使用元组空间提供拜占庭容错服务。与ZooKeeper一样�
 
 ZooKeeper takes a wait-free approach to the problem of coordinating processes in distributed systems, by exposing wait-free objects to clients. We have found ZooKeeper to be useful for several applications inside and outside Yahoo!. ZooKeeper achieves throughput values of hundreds of thousands of operations per second for read-dominant workloads by using fast reads with watches, both of which served by local replicas. Although our consistency guarantees for reads and watches appear to be weak, we have shown with our use cases that this combination allows us to implement efficient and sophisticated coordination protocols at the client even though reads are not precedence-ordered and the implementation of data objects is wait-free. The wait-free property has proved to be essential for high performance.
 
-ZooKeeper采用了无等待（wait-free）的方法来解决分布式系统中进程协调的问题，通过向客户端提供无等待对象。我们发现ZooKeeper在Yahoo!内外的多个应用中非常有用。通过使用快速读取和监视器（watches），ZooKeeper对于以读操作为主的工作负载可以达到每秒数十万个操作的吞吐量，这两个特性都由本地副本提供支持。尽管我们的读取和监视器的一致性保证似乎比较弱，但我们通过用例证明，这种组合使我们能够在客户端实现高效且复杂的协调协议，即使读取操作没有优先顺序，并且数据对象的实现是无等待的。无等待属性被证明对于高性能非常重要。
+ZooKeeper采用了无等待（wait-free）的方法来解决分布式系统中进程协调的问题，通过向客户端提供无等待对象。我们发现ZooKeeper在Yahoo!内外的多个应用中非常有用。通过使用快速读取和监听器（watches），ZooKeeper对于以读操作为主的工作负载可以达到每秒数十万个操作的吞吐量，这两个特性都由本地副本提供支持。尽管我们的读取和监听器的一致性保证似乎比较弱，但我们通过用例证明，这种组合使我们能够在客户端实现高效且复杂的协调协议，即使读取操作没有优先顺序，并且数据对象的实现是无等待的。无等待属性被证明对于高性能非常重要。
 
 Although we have described only a few applications, there are many others using ZooKeeper. We believe such a success is due to its simple interface and the powerful abstractions that one can implement through this interface. Further, because of the high-throughput of ZooKeeper, applications can make extensive use of it, not only course-grained locking.
 
